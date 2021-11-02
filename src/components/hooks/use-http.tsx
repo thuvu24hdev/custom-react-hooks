@@ -1,11 +1,10 @@
 import { useCallback, useState } from "react";
-import { Task } from "../../App";
 
 interface RequestConfig {
   url: string;
   method?: string;
   headers?: HeadersInit | undefined;
-  body?: JSON;
+  body?: object;
 }
 
 const useHttp = () => {
@@ -15,7 +14,7 @@ const useHttp = () => {
   const sendRequest = useCallback(
     async (
       requestConfig: RequestConfig,
-      applyData: (tasksObj: Task[]) => void
+      applyData: any
     ) => {
       setIsLoading(true);
       setError(null);
