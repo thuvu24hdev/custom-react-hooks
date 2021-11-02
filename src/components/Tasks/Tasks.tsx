@@ -1,3 +1,4 @@
+import { MouseEventHandler } from "react";
 import { Task } from "../../App";
 import Section from "../UI/Section";
 import TaskItem from "./TaskItem";
@@ -7,7 +8,7 @@ interface TasksProps {
   items: Task[];
   error: any;
   loading: boolean;
-  onFetch: () => {};
+  onFetch: any;
 }
 const Tasks = (props: TasksProps) => {
   let taskList = <h2>No tasks found. Start adding some!</h2>;

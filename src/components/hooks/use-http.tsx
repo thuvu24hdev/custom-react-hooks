@@ -1,40 +1,44 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { Task } from "../../App";
 
 interface RequestConfig {
   url: string;
-  method: string;
-  headers: HeadersInit | undefined;
-  body: JSON;
+  method?: string;
+  headers?: HeadersInit | undefined;
+  body?: JSON;
 }
 
-const useHttp = (
-  requestConfig: RequestConfig,
-  applyData: (data: Response) => {}
-) => {
+const useHttp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const sendRequest = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(requestConfig.url, {
-        method: requestConfig.method,
-        headers: requestConfig.headers,
-        body: JSON.stringify(requestConfig.body),
-      });
+  const sendRequest = useCallback(
+    async (
+      requestConfig: RequestConfig,
+      applyData: (tasksObj: Task[]) => void
+    ) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(requestConfig.url, {
+          method: requestConfig.method ? requestConfig.method : "GET",
+          headers: requestConfig.headers ? requestConfig.headers : {},
+          body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
+        });
 
-      if (!response.ok) {
-        throw new Error("Request failed!");
+        if (!response.ok) {
+          throw new Error("Request failed!");
+        }
+
+        const data = await response.json();
+        applyData(data);
+      } catch (err: any) {
+        setError(err.message || "Something went wrong!");
       }
-
-      const data = await response.json();
-      applyData(data);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong!");
-    }
-    setIsLoading(false);
-  };
+      setIsLoading(false);
+    },
+    []
+  );
 
   return {
     isLoading,
